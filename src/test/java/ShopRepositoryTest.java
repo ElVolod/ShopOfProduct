@@ -1,3 +1,4 @@
+import org.example.AlreadyExistsException;
 import org.example.NotFoundException;
 import org.example.Product;
 import org.example.ShopRepository;
@@ -33,6 +34,26 @@ public class ShopRepositoryTest {
     public void shouldThrowExceptionIfIdNotFound() {
         Assertions.assertThrows(NotFoundException.class, () -> {
             repo.removeById(100);
+        });
+    }
+
+    @Test
+    public void shouldAddNewProduct() {
+        Product item4 = new Product(4, "Ноутбук", 50_000);
+        repo.add(item4);
+
+        Product[] expected = {item1, item2, item3, item4};
+        Product[] actual = repo.findAll();
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenAddExistingId() {
+        Product duplicate = new Product(1, "Другая книга", 700);
+
+        Assertions.assertThrows(AlreadyExistsException.class, () -> {
+            repo.add(duplicate);
         });
     }
 }
